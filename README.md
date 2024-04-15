@@ -27,7 +27,7 @@ dict_keys(['success', 'message', 'url', 'status_code', 'timeout_val', 'method', 
 # import Crawler
 from HiveWebCrawler.Crawler import WebCrawler
 
-# tootlkit init
+# toolkit init
 CrawlerToolkit = WebCrawler()
 
 # sending http/s requests
@@ -61,7 +61,9 @@ for single_list in crawled_links["data_array"]:
 
 # OUTPUT
 
-dict_keys(['success', 'data_array', 'original_url', 'message'])
+dict_keys(['success', 'data_array', 'original_url', 'message']) # dict keys
+
+# Crawled links
 ['https://www.google.com/imghp?hl=tr&tab=wi', None]
 ['https://maps.google.com.tr/maps?hl=tr&tab=wl', None]
 ['https://play.google.com/?hl=tr&tab=w8', None]
@@ -90,7 +92,7 @@ dict_keys(['success', 'data_array', 'original_url', 'message'])
 # import Crawler
 from HiveWebCrawler.Crawler import WebCrawler
 
-# tootlkit init
+# toolkit init
 CrawlerToolkit = WebCrawler()
 
 # sending http/s requests
@@ -124,14 +126,16 @@ for single_list in crawled_links["data_array"]:
 
 # OUTPUT 
 
-dict_keys(['success', 'data_array', 'original_url'])
+dict_keys(['success', 'data_array', 'original_url']) # dict keys
+
+# Crawled Images
 ['https://google.com/images/branding/googlelogo/1x/googlelogo_white_background_color_272x92dp.png', 'Google', None]
 ['https://google.com/textinputassistant/tia.png', None, None]
 
 ```
 
 
-## Crawling Phone Numver OR Email address
+## Crawling Phone Number OR Email address
 
 
 ### E-mail
@@ -141,7 +145,7 @@ dict_keys(['success', 'data_array', 'original_url'])
 # import Crawler
 from HiveWebCrawler.Crawler import WebCrawler
 
-# tootlkit init
+# toolkit init
 CrawlerToolkit = WebCrawler()
 
 # sending http/s requests
@@ -173,19 +177,21 @@ for single_list in crawled_links["data_array"]:
 
 # OUTPUT 
 
-dict_keys(['success', 'data_array', 'message'])
+dict_keys(['success', 'data_array', 'message']) # dict keys
+
+# Crawled emails
 [None, 'CENSORED@hurriyet.com.tr']
                                       
 ```
 
-### Phone Numvers
+### Phone Numbers
 
 
 ```python
 # import Crawler
 from HiveWebCrawler.Crawler import WebCrawler
 
-# tootlkit init
+# toolkit init
 CrawlerToolkit = WebCrawler()
 
 # sending http/s requests
@@ -216,8 +222,8 @@ for single_list in crawled_links["data_array"]:
 
 
 # OUTPUT 
-dict_keys(['success', 'data_array', 'message'])
-[None, '+90XXXXXXXXXXX']
+dict_keys(['success', 'data_array', 'message']) # dict keys
+[None, '+90XXXXXXXXXXX'] # Crawled phone numbers
 
-                                      
 ```
+
