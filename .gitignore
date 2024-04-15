@@ -1,6 +1,7 @@
 dist*
 build*
 .env*
+test*
 .venv*
 *.egg-info*
 __pycache__*
