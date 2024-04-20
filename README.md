@@ -3,6 +3,12 @@
 `pip install HiveWebCrawler`
 
 
+# v0.1.4 News
+
+- With v0.1.4, erroneous scraping scenarios have been significantly reduced.
+- Image scraping has been improved.
+
+
 # Example:
 
 ## Sending requests:

@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-
+from urllib.parse import urlparse
 """
             Prime Security | ThiHive @ WebCrawler 
 
@@ -16,12 +16,12 @@ __AUTHOR__ = "Prime Security"
 class WebCrawler():    
     def __init__(self) -> None:
         self.HREF_BLACKLIST = [
-            "javascript:;", "_banlk", "__blank"
+            "javascript:;", "_banlk", "__blank","#","javascript:__doPostBack","javascript:void(0);"
         ]    
     
         self.IMAGE_BLACKLIST = ["data:image/svg+xml;",]
         self.IMAGE_EXTENSION_BLACKLIST = [".svg"]
-        
+        self.IMAGE_LINK_EXTENSIONS = [".png",".jpg",".jpeg",".webm",".tiff",".psd",".eps",".raw"]
         
         
     def prepare_string(self, target_str:str) -> str:
@@ -76,7 +76,9 @@ class WebCrawler():
         detected_data = detected_data.lower()
         detected_data = detected_data.replace("tel:","")
         detected_data = detected_data.replace(" ","")
-        
+        detected_data = detected_data.replace("(","")
+        detected_data = detected_data.replace(")","")
+            
         if len(detected_data) == 0:
             return [False, "No phone in string"]
 
@@ -218,8 +220,20 @@ class WebCrawler():
                 if only_address:
                     href_target = href_target.split("?")
                     href_target = href_target[0]
-                    
-            
+                
+                if href_target.startswith("www."):
+                    href_target = "https://" + href_target
+
+                if href_target.startswith("#"):
+                    href_target = None
+                
+
+                analysed_url = urlparse(href_target)
+                
+                
+                if not analysed_url.scheme and href_target != None:
+                    href_target = original_target_url + href_target
+                
             if href_target is not None:
                 results_dict["data_array"].append( [ href_target, href_title ])
 
@@ -344,10 +358,85 @@ class WebCrawler():
                 if exluce_parser.endswith(".svg")  or "data:image/svg+xml;" in exluce_parser:
                     image_url = None
                     
-                
+            
             if image_url is not None:
+                if image_url.startswith("/"):
+                    image_url = original_url + image_url[1:]
                 
+                if image_url.startswith("www."):
+                    image_url = "https://" + image_url
+
+                if image_url.startswith("#"):
+                    image_url = None
+                
+                analysed_url = urlparse(image_url)
+                
+                
+                if not analysed_url.scheme and image_url != None:
+                    image_url = original_url + image_url
+
+
+
+            if image_url is not None:    
                 results_dict["data_array"].append( [ image_url, image_alt, image_title ])
+
+
+        # Direct image link detections ( Direcyory index etc..)
+        
+        for single_link in soup_data.select("a"):
+            
+            href_target = None
+            href_title = None
+            
+            if "href" in single_link.attrs.keys():
+                check_href_target = single_link.attrs["href"]
+                if not self.is_null(check_href_target) and check_href_target not in self.HREF_BLACKLIST:
+                    href_target = check_href_target
+            
+            if "title" in single_link.attrs.keys():
+                check_href_title = single_link.attrs["title"]
+                if not self.is_null(check_href_title):
+                    href_title = check_href_title
+
+            if href_target is not None:
+                if href_target.startswith("/"):
+                    href_target = original_url + href_target[1:]
+        
+                
+                href_target = href_target.split("?")
+                href_target = href_target[0]
+                
+                if href_target.startswith("www."):
+                    href_target = "https://" + href_target
+
+                if href_target.startswith("#"):
+                    href_target = None
+                
+
+                analysed_url = urlparse(href_target)
+                
+                
+                if not analysed_url.scheme and href_target != None:
+                    href_target = original_url + href_target
+            
+            
+            if href_target is not None:
+                for extensions in self.IMAGE_LINK_EXTENSIONS:
+                    if href_target.lower().endswith(extensions):
+                        results_dict["data_array"].append( [ href_target, href_title ])
+                        break
+
+        if len(results_dict["data_array"]) == 0:
+            results_dict["success"] = False
+            results_dict["message"] = "No link detected in url"
+        else:
+            results_dict["success"] = True
+            results_dict["message"] = "Proccess successfuly"
+        return results_dict
+        
+
+
+
 
         results_dict["success"] = True
 

@@ -9,7 +9,7 @@ with open('README.md','r') as readmeFile:
 setuptools.setup(
     name='HiveWebCrawler',
     author='MehmetYukselSekeroglu',
-    version='0.0.4',
+    version='0.1.4',
     author_email='dijital_evren@protonmail.com',
     description='Python 3.x Web Crawler, Images, Urls, Emails, Phone numbers',
     long_description=long_describe,
@@ -22,5 +22,5 @@ setuptools.setup(
     url='https://github.com/MehmetYukselSekeroglu/HiveWebCrawler',
     packages=setuptools.find_packages(),
     python_requires='>=3.8',
-    install_requires=['requests','beautifulsoup4'], 
+    install_requires=['requests','beautifulsoup4','urllib'], 
 )

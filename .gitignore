@@ -5,3 +5,6 @@ test*
 .venv*
 *.egg-info*
 __pycache__*
+main.py
+*.db
+*.sqlite*
