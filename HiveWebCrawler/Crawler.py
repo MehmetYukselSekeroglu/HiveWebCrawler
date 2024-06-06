@@ -221,12 +221,21 @@ class WebCrawler():
                     href_target = href_target.split("?")
                     href_target = href_target[0]
                 
-                if href_target.startswith("www."):
-                    href_target = "https://" + href_target
-
+                if not href_target.startswith("http://") and not href_target.startswith("https://"):
+                    if href_target.startswith(urlparse(original_target_url).netloc) or href_target.startswith("www.") :
+                          href_target = urlparse(original_target_url).netloc + "://" + href_target
+                    else:
+                        if href_target.startswith("#/"):
+                            href_target = href_target[2:]
+                
+                        href_target ="https://"+ urlparse(original_target_url).netloc + "/" + href_target  
+                          
+                          
                 if href_target.startswith("#"):
                     href_target = None
                 
+                if href_target.endswith(str(urlparse(href_target).netloc+"/")) or href_target.endswith(str(urlparse(href_target).netloc+"/#")) or href_target.endswith(str(urlparse(href_target).netloc+"/#!")):
+                    href_target = None
 
                 analysed_url = urlparse(href_target)
                 
@@ -243,6 +252,7 @@ class WebCrawler():
         else:
             results_dict["success"] = True
             results_dict["message"] = "Proccess successfuly"
+            
         return results_dict
         
         
@@ -338,10 +348,15 @@ class WebCrawler():
                     if image_check_url.startswith("/"):
                         image_check_url = original_url + image_check_url[1:]
 
-                    if only_address:
-                        image_check_url = image_check_url.split("?")
-                        image_check_url = image_check_url[0]
-                    
+                    if not image_check_url.startswith("http://") and not image_check_url.startswith("https://"):
+                        if image_check_url.startswith(urlparse(original_url).netloc):
+                            image_check_url = "https://" + image_check_url
+                        else:
+                        
+                            if image_check_url.startswith("#/"):
+                                image_check_url = image_check_url[2:]
+                        
+                            image_check_url ="https://"+ urlparse(original_url).netloc + "/" + image_check_url
                     
                     image_url = image_check_url
 
