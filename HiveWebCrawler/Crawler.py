@@ -1,6 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
 from urllib.parse import urlparse
+
+
+
+
+
 """
             Prime Security | ThiHive @ WebCrawler 
 
@@ -9,22 +14,38 @@ Author          :   __AUTHOR__
 
 """
 
-
-__VERSION__ = "0.0.1"
+# app vendor and version info 
+__VERSION__ = "0.1.4"
 __AUTHOR__ = "Prime Security"
 
 class WebCrawler():    
     def __init__(self) -> None:
+        
+        # excluded href target/s
         self.HREF_BLACKLIST = [
             "javascript:;", "_banlk", "__blank","#","javascript:__doPostBack","javascript:void(0);"
         ]    
     
+        # excluded image type 
         self.IMAGE_BLACKLIST = ["data:image/svg+xml;",]
+        
+        # excluded image extensions 
         self.IMAGE_EXTENSION_BLACKLIST = [".svg"]
+        
+        # for direct URL based image crawling 
         self.IMAGE_LINK_EXTENSIONS = [".png",".jpg",".jpeg",".webm",".tiff",".psd",".eps",".raw"]
         
         
     def prepare_string(self, target_str:str) -> str:
+        """
+        Args:
+            target_str (str): prepare space and other chars
+
+            example input: "    0 555 44 22 11 "
+        Returns:
+            str: your proccessed data
+            example output: "0 555 44 22 11"
+        """
         first_numeric_detected = False
         detected_data = ""
         
@@ -44,6 +65,15 @@ class WebCrawler():
     
     
     def search_email_address(self,target_str) -> list:
+        """
+        Args:
+            target_str (any): search target
+
+        Returns:
+            list: [ bool, str] 
+                    |       |-> if success -> phone number else -> error message
+                    |-> if success True else False 
+        """
         detected_data = self.prepare_string(target_str=target_str)
         if len(detected_data) == 0:
             return [False, "String is null"]
@@ -73,6 +103,7 @@ class WebCrawler():
         if detected_data[0:4].lower() != "tel:":
             return [False, "No phone in string"]
         
+        # clear string proccess
         detected_data = detected_data.lower()
         detected_data = detected_data.replace("tel:","")
         detected_data = detected_data.replace(" ","")
@@ -84,8 +115,35 @@ class WebCrawler():
 
         return [True, detected_data]
     
+    
+    def crawl_phone_number_from_text(self,response_text:str) -> dict:
+        try:
+            pass
+        
+        except Exception as err:
+            pass
+        
+    
+    def crawl_email_address_from_text(self,response_text:str) -> dict:
+        try:
+            pass
+        
+        except Exception as err:
+            pass
+    
     def crawl_email_address_from_response_href(self,response_text:str) -> dict:
+        """
+        Args:
+            response_text (str): request answer text
 
+        Returns:
+            dict: 
+            {
+                "success": (bool),
+                "data_array": (list) [title, url],
+                "message": (str) error code or feedback
+            }
+        """
 
         
         soup_data = BeautifulSoup(response_text, "html.parser")
@@ -133,7 +191,18 @@ class WebCrawler():
         
     
     def crawl_phone_number_from_response_href(self,response_text:str) -> dict:
+        """
+        Args:
+            response_text (str): request answer text
 
+        Returns:
+            dict: 
+            {
+                "success": (bool),
+                "data_array": (list) [title, phone_number],
+                "message": (str) error code or feedback
+            }
+        """
 
         
         soup_data = BeautifulSoup(response_text, "html.parser")
@@ -182,6 +251,22 @@ class WebCrawler():
         
     
     def crawl_links_from_pesponse_href(self,original_target_url:str,response_text:str,only_address:bool=False) -> dict:
+        """_summary_
+
+        Args:
+            original_target_url (str): original url for feedback
+            response_text (str): request answer text
+            only_address (bool, optional): full address or only url. Defaults to False.
+
+        Returns:
+            dict: 
+            {
+                "success": (bool),
+                "data_array": (list) [title, url],
+                "original_url":original_target_url,
+                "message": (str) error code or feedback
+            }
+        """
         
         original_target_url = str(original_target_url)
         
@@ -236,7 +321,8 @@ class WebCrawler():
                 
             if href_target is not None:
                 results_dict["data_array"].append( [ href_target, href_title ])
-
+        
+        # set possible status
         if len(results_dict["data_array"]) == 0:
             results_dict["success"] = False
             results_dict["message"] = "No link detected in url"
@@ -247,6 +333,26 @@ class WebCrawler():
         
         
     def send_request(self,target_url,timeout_sec=5,req_headers:dict=None) -> dict:
+        """_summary_
+
+        Args:
+            target_url (_type_): _description_
+            timeout_sec (int, optional): _description_. Defaults to 5.
+            req_headers (dict, optional): _description_. Defaults to None.
+
+        Returns:
+            dict:
+                {
+                    "success":False,
+                    "message":f"Web request failed, status code: {send_request.status_code}",
+                    "url":target_url,
+                    "status_code":send_request.status_code,
+                    "timeout_val":timeout_sec,
+                    "method":"get",
+                    "data":None
+                }
+        """
+        
         try:
             request_header = {
                 "User-Agent":f"{__AUTHOR__} WebCrawle {__VERSION__}"
@@ -277,6 +383,7 @@ class WebCrawler():
                 "data":send_request.text,
                 }
         
+        # if any error handled
         except Exception as err:
             return {
                 "success":False,
@@ -290,7 +397,14 @@ class WebCrawler():
             
             
 
-    def is_null(self,data):
+    def is_null(self,data) -> bool:
+        """
+        Args:
+            data (any): target string data
+
+        Returns:
+            bool -> if string is null return True else False 
+        """
         if data ==None:
             return True
         if len(str(data)) == 0:
@@ -303,6 +417,22 @@ class WebCrawler():
 
 
     def crawl_image_from_response(self,response_text:str,original_url:str,exclude_svg=True,only_address=False) -> dict:
+        """_summary_
+
+        Args:
+            response_text (str): _description_
+            original_url (str): _description_
+            exclude_svg (bool, optional): _description_. Defaults to True.
+            only_address (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            dict: 
+                {
+                "success":False, -> bool | proccess status
+                "data_array":[], -> list | your data
+                "original_url":original_url -> str | feedback url
+                }
+        """
         soup_data = BeautifulSoup(response_text, "html.parser")
 
         if not original_url.endswith("/"):
@@ -443,7 +573,7 @@ class WebCrawler():
         return results_dict
 
 
-
+# For develop stage tests
 if __name__ =="__main__":
     
     static_test_url = "https://www.hurriyet.com.tr/bizeulasin/"
