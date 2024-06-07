@@ -15,7 +15,7 @@ Author          :   __AUTHOR__
 """
 
 # app vendor and version info 
-__VERSION__ = "0.1.4"
+__VERSION__ = "0.1.6"
 __AUTHOR__ = "Prime Security"
 
 class WebCrawler():    
@@ -308,12 +308,12 @@ class WebCrawler():
                 
                 if not href_target.startswith("http://") and not href_target.startswith("https://"):
                     if href_target.startswith(urlparse(original_target_url).netloc) or href_target.startswith("www.") :
-                          href_target = urlparse(original_target_url).netloc + "://" + href_target
+                          href_target = urlparse(original_target_url).scheme + "://" + href_target
                     else:
                         if href_target.startswith("#/"):
                             href_target = href_target[2:]
                 
-                        href_target ="https://"+ urlparse(original_target_url).netloc + "/" + href_target  
+                        href_target = urlparse(original_target_url).scheme  +"://"+ urlparse(original_target_url).netloc + "/" + href_target  
                           
                           
                 if href_target.startswith("#"):
@@ -480,13 +480,13 @@ class WebCrawler():
 
                     if not image_check_url.startswith("http://") and not image_check_url.startswith("https://"):
                         if image_check_url.startswith(urlparse(original_url).netloc):
-                            image_check_url = "https://" + image_check_url
+                            image_check_url = urlparse(original_url).scheme +"://" + image_check_url
                         else:
                         
                             if image_check_url.startswith("#/"):
                                 image_check_url = image_check_url[2:]
                         
-                            image_check_url ="https://"+ urlparse(original_url).netloc + "/" + image_check_url
+                            image_check_url =urlparse(original_url).scheme  +"://"+ urlparse(original_url).netloc + "/" + image_check_url
                     
                     image_url = image_check_url
 
